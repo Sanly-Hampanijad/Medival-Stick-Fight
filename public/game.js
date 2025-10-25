@@ -1,23 +1,20 @@
 const socket = io();
 
-socket.on("clearCanvas", () => {
+socket.on("posUpdate", data => {
+    // remove bodies
     const bodies = Matter.Composite.allBodies(engine.world);
     bodies.forEach(body => {
         Matter.Composite.remove(engine.world, body);
     });
-});
-
-socket.on("renderObstacles", obstacles => {
-    Composite.add(engine.world, [obstacles.body]);
-})
-
-socket.on("posUpdate", pos => {
-    for(const p in pos) {
-        var body = pos[p];
-        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 80, {isStatic: true})]);
+    
+    for(const p of data.obstacles) {
+        Composite.add(engine.world, [Bodies.rectangle(p.x, p.y, p.w, p.h, {isStatic: true})]);
     }
 
-    console.log('pos update', pos);
+    for(const p in data.positions) {
+        var body = data.positions[p];
+        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 80, {isStatic: true})]);
+    }
 })
 
 // module aliases

@@ -1,8 +1,10 @@
-class obsctacle{
+class Obsctacle{
     constructor(x, y, width, height){
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.w = width;
+        this.h = height;
     }
 }
+
+module.exports = Obsctacle

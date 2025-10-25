@@ -23,13 +23,15 @@ var Engine = Matter.Engine,
 var engine = Engine.create();
 var world = engine.world;
 
+var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+const obstacles = [
+    new Obstacle(400, 610, 810, 60),
+]
 
-
-
+Matter.World.add(world, [ground]);
 
 var runner = Runner.create();
 
-var obstacles = {body: Bodies.rectangle(400, 610, 810, 60, { isStatic: true })};
 Matter.World.add(world, [obstacles]);
 setInterval(() => {
     Matter.Engine.update(engine, 1000 / 60);
@@ -39,9 +41,8 @@ setInterval(() => {
         const data = players[id];
         positions[id] = {x: data.position.x, y: data.position.y};
     }
-    io.emit("clearCanvas");
-    io.emit("renderObstables", obstacles);
-    io.emit("posUpdate", positions);
+    
+    io.emit("posUpdate", {positions: positions, obstacles: obstacles});
 
 }, 1000 / 60)
 
