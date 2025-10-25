@@ -24,17 +24,33 @@ var engine = Engine.create();
 var world = engine.world;
 
 // var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
-const obstacles = [
-    {x: 400, y: 610, w: 810, h: 60},
-    {x: 100, y: 300, w: 100, h: 100},
-]
+// const obstacles = [
+//     new Obstacle(400, 610, 810, 60),
+// ]
+
+const platformData = [
+    { x: 100, y: 670, w: 300, h: 60, label: "ground" },
+    { x: 550, y: 670, w: 300, h: 60, label: "ground" },
+    { x: 1150, y: 670, w: 500, h: 60, label: "ground" },
+
+];
+
+
+const platforms = platformData.map(data => {
+    return Bodies.rectangle(data.x, data.y, data.w, data.h, { 
+        isStatic: true, 
+        label: data.label, 
+        render: {
+            visible: false
+        }
+    });
+});
+
+
+Composite.add(world, platforms);
+
 
 // Matter.World.add(world, [ground]);
-for (i in obstacles){
-    
-    rect = Bodies.rectangle(obstacles[i].x, obstacles[i].y, obstacles[i].w, obstacles[i].h, { isStatic: true });
-    Matter.World.add(world, [rect]);
-}
 
 var runner = Runner.create();
 
@@ -48,9 +64,9 @@ setInterval(() => {
         positions[id] = {x: data.position.x, y: data.position.y, dir: data.direction};
     }
     
-    io.emit("posUpdate", {positions: positions, obstacles: obstacles});
+    io.emit("posUpdate", {positions: positions, platforms: platformData});
 
-}, 1000 / 250)
+}, 1000 / 60)
 
 // socket io
 io.on('connection', (socket) => {
@@ -60,27 +76,33 @@ io.on('connection', (socket) => {
     players[socket.id] = player;
     Matter.World.add(world, [player]);
     socket.on("keyDown", (KeyCode) => {
-        console.log(KeyCode);
-        switch (KeyCode){
-            case "KeyA":
-                console.log("Pressing A");
-                player.position.x -= 5;
-                if (player.direction == -1){
-                    player.direction *= -1
-                }
-                break;
-            case "KeyD":
-                player.position.x += 5;
-                if (player.direction == 1){
-                    player.direction *= -1;
-                }
-                console.log("Presssing D");
-                break;
-            case "Space":
-                Matter.Body.applyForce(player, player.position, {x: 0, y: -0.5})
-                break;
+    let moveSpeed = 5;
+
+    // Get the player object associated with this specific socket
+    const currentPlayer = players[socket.id]; 
+    
+    // Safety check
+    if (!currentPlayer) {
+        console.error("Player not found for socket:", socket.id);
+        return; 
+    }
+
+    let currentYVelocity = currentPlayer.velocity ? currentPlayer.velocity.y : 0;
+
+    switch (KeyCode){
+        case "KeyA":
+            Matter.Body.setVelocity(currentPlayer, { x: -moveSpeed, y: currentYVelocity });
+            break;
+        case "KeyD":
+            Matter.Body.setVelocity(currentPlayer, { x: moveSpeed, y: currentYVelocity });
+
+            break;
+        case "Space":
+
+            Matter.Body.applyForce(currentPlayer, currentPlayer.position, {x: 0, y: -0.5}); 
+            break;
         }
-    })
+    });
 });
 
 server.listen(3000, () => {
