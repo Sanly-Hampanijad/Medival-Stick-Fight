@@ -10,12 +10,7 @@ var world = engine.world;
 engine.gravity.y = 0;
 
 
-let platformImageLoaded = false;
-const platformImage = new Image();
-platformImage.src = 'assets/platform.png';
-platformImage.onload = () => {
-    platformImageLoaded = true;
-};
+
 
 
 var render = Render.create({
@@ -49,11 +44,7 @@ socket.on('worldUpdate', (data) => {
         isStatic: true, 
         label: data.label, 
         render: {
-            sprite: {
-                texture: "assets/platform.png",
-                xScale: 5,
-                yScale: 3
-            }
+            visible: false
         }})])
     }
 

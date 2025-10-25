@@ -29,9 +29,7 @@ var world = engine.world;
 // ]
 
 const platformData = [
-    { x: 100, y: 670, w: 300, h: 60, label: "ground" },
-    { x: 550, y: 670, w: 300, h: 60, label: "ground" },
-    { x: 1150, y: 670, w: 500, h: 60, label: "ground" },
+    { x: 100, y: 670, w: 9999, h: 60, label: "ground" },
 ];
 
 
