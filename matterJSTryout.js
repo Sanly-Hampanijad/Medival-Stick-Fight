@@ -20,10 +20,18 @@ var ground7;
 
 var clouds = [];
 
+let groundImg;
+
+function preLoad()
+{
+    groundImg = loadImage('assets/platform.aseprite');
+}
 
 function setup() {
 
     createCanvas(windowWidth, windowHeight);
+
+    noSmooth();
     
 
     engine = Engine.create();
@@ -141,7 +149,8 @@ function drawPhysicsObjects() {
         if (body.label === 'box') {
             fill('#E699A8'); 
         } else if (body.label === 'ground') {
-            fill('#5C4033'); 
+            //fill('#5C4033');
+            texture(groundImg); 
         }
 
 
