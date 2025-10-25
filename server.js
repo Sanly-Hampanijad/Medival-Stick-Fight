@@ -26,7 +26,7 @@ var world = engine.world;
 // var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 const obstacles = [
     {x: 400, y: 610, w: 810, h: 60},
-    {x: 100, y: 100, w: 100, h: 100},
+    {x: 100, y: 300, w: 100, h: 100},
 ]
 
 // Matter.World.add(world, [ground]);
