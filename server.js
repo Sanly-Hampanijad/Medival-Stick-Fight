@@ -16,7 +16,8 @@ players = {}
 
 io.on('connection', (socket) => {
     console.log('a user has connected ', socket.id);
-    players[socket.id] = Player();
+    players[socket.id] = new Player();
+    players[socket.id]
     
 });
 
