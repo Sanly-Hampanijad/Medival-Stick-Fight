@@ -50,7 +50,7 @@ setInterval(() => {
     
     io.emit("posUpdate", {positions: positions, obstacles: obstacles});
 
-}, 1000 / 60)
+}, 1000 / 250)
 
 // socket io
 io.on('connection', (socket) => {
