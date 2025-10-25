@@ -1,69 +1,94 @@
-// game.js
-
-// 1. Import the sketch from your other file
-import { sketch } from './setup_world.js';
-
-// 2. Get the HTML element where the canvas will live
-const canvasContainer = document.getElementById('canvas-container');
-
-// 3. Create the p5.js instance. This starts your game.
-new p5(sketch, canvasContainer);
+var Engine = Matter.Engine,
+    Render = Matter.Render,
+    Runner = Matter.Runner,
+    World = Matter.World,
+    Bodies = Matter.Bodies;
 
 
+var engine = Engine.create();
+var world = engine.world;
+engine.gravity.y = 0;
 
 
-// import { sketch } from './setup_world.js';
+let platformImageLoaded = false;
+const platformImage = new Image();
+platformImage.src = 'assets/platform.png';
+platformImage.onload = () => {
+    platformImageLoaded = true;
+};
 
-// const socket = io();
-// const canvasContainer = document.getElementById('canvas-container');
+
+var render = Render.create({
+    element: document.body,
+    engine: engine,
+    options: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        wireframes: false,
+        background: 'transparent'
+    }
+});
 
 
-// new p5(sketch, canvasContainer);
+Render.run(render);
+
+const socket = io();
 
 
-// socket.on("posUpdate", data => {
-//     // remove bodies
-//     const bodies = Matter.Composite.allBodies(engine.world);
-//     bodies.forEach(body => {
-//         Matter.Composite.remove(engine.world, body);
-//     });
-    
-//     for(const p of data.obstacles) {
-//         Composite.add(engine.world, [Bodies.rectangle(p.x, p.y, p.w, p.h, {isStatic: true})]);
-//     }
+let localPlatforms = {};
 
-//     for(const p in data.positions) {
-//         var body = data.positions[p];
-//         Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 99, {isStatic: true})]);
-//     }
-// })
+socket.on('posUpdate', (data) => {
+    // remove bodies
+    const bodies = Matter.Composite.allBodies(engine.world);
+    bodies.forEach(body => {
+        Matter.Composite.remove(engine.world, body);
+    });
 
-// // module aliases
-// var Engine = Matter.Engine,
-//     Render = Matter.Render,
-//     Runner = Matter.Runner,
-//     Bodies = Matter.Bodies,
-//     Composite = Matter.Composite;
+    for (const p of data.platforms) {
+        Matter.Composite.add(engine.world, [Bodies.rectangle(p.x, p.y, p.w, p.h, { 
+        isStatic: true, 
+        label: data.label, 
+        render: {
+            sprite: {
+                texture: "assets/platform.png",
+                xScale: 5,
+                yScale: 3
+            }
+        }})])
+    }
 
-// // create an engine
-// var engine = Engine.create();
 
-// // create a renderer
-// var render = Render.create({
-//     element: document.body,
-//     engine: engine
-// });
+    for(const p in data.positions) {
+        var body = data.positions[p];
+        
+        var current_animation;
+        var current_time = Date.now();
+        var animation_to_play = current_time % 700;
+        if (body.dir == 1){
+            current_animation = "assets/idle/tile00" + Math.floor(animation_to_play / 100) + ".png"
+        }
+        else{
+            current_animation = "assets/idle/image(" + (Math.floor(animation_to_play / 100) + 1) + ").png" 
+        }
+        Matter.Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 100, 100, {isStatic: true, render: {
+            sprite: {
+                texture: current_animation,
+                xScale: 3,
+                yScale: 3,
+            }
 
-// // create two boxes and a ground
-// var boxA = Bodies.rectangle(400, 200, 80, 80, {isStatic: true});
+            }})])
+    };
 
-// // run the renderer
-// Render.run(render);
 
-// // add all of the bodies to the world
-// Composite.add(engine.world, [boxA]);
+});
 
-// addEventListener("keydown", (event) => {
-//     socket.emit("keyDown", event.code)
-// });
+
+window.addEventListener('keydown', (e) => {
+    socket.emit('keyDown', e.code);
+});
+
+
+
+
 
