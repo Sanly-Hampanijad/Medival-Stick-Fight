@@ -23,16 +23,22 @@ var Engine = Matter.Engine,
 var engine = Engine.create();
 var world = engine.world;
 
-var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+// var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 const obstacles = [
-    new Obstacle(400, 610, 810, 60),
+    {x: 400, y: 610, w: 810, h: 60},
+    {x: 100, y: 100, w: 100, h: 100},
 ]
 
-Matter.World.add(world, [ground]);
+// Matter.World.add(world, [ground]);
+for (i in obstacles){
+    
+    rect = Bodies.rectangle(obstacles[i].x, obstacles[i].y, obstacles[i].w, obstacles[i].h, { isStatic: true });
+    Matter.World.add(world, [rect]);
+}
 
 var runner = Runner.create();
 
-Matter.World.add(world, [obstacles]);
+// Matter.World.add(world, [obstacles]);
 setInterval(() => {
     Matter.Engine.update(engine, 1000 / 60);
 
