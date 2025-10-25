@@ -13,8 +13,25 @@ socket.on("posUpdate", data => {
 
     for(const p in data.positions) {
         var body = data.positions[p];
-        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 99, {isStatic: true})]);
-    }
+        var current_animation;
+        var current_time = Date.now();
+        var animation_to_play = current_time % 700;
+        if (body.dir == -1){
+            current_animation = "assets/tile00" + Math.floor(animation_to_play / 100) + ".png"
+        }
+        else{
+            current_animation = "assets/image(" + (Math.floor(animation_to_play / 100) + 1) + ").png" 
+        }
+        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 100, 100, {isStatic: true, render: {
+            sprite: {
+                texture: current_animation,
+                    // texture: body.dir < 0 ? "assets/Idle1_left.png" : "assets/Idle1_right",
+                    xScale: 3,
+                    yScale: 3,
+                }
+
+            }})])
+    };
 })
 
 // module aliases
@@ -33,7 +50,8 @@ var render = Render.create({
     engine: engine,
     options: {
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
+        wireframes: false,
     }
 });
 

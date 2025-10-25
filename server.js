@@ -45,7 +45,7 @@ setInterval(() => {
     const positions = {};
     for(const id in players) {
         const data = players[id];
-        positions[id] = {x: data.position.x, y: data.position.y};
+        positions[id] = {x: data.position.x, y: data.position.y, dir: data.direction};
     }
     
     io.emit("posUpdate", {positions: positions, obstacles: obstacles});
@@ -64,10 +64,16 @@ io.on('connection', (socket) => {
         switch (KeyCode){
             case "KeyA":
                 console.log("Pressing A");
-                player.position.x -= 5
+                player.position.x -= 5;
+                if (player.direction == -1){
+                    player.direction *= -1
+                }
                 break;
             case "KeyD":
-                player.position.x += 5
+                player.position.x += 5;
+                if (player.direction == 1){
+                    player.direction *= -1;
+                }
                 console.log("Presssing D");
                 break;
             case "Space":
