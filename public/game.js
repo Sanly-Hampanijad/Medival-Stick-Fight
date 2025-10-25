@@ -22,63 +22,66 @@ var ground7;
 
 var clouds = [];
 
+let groundImg;
+
+function preload()
+{
+    groundImg = loadImage('assets/platform.png');
+}
 
 function setup() {
 
     createCanvas(windowWidth, windowHeight);
-    
+
+    noSmooth();
+
 
     engine = Engine.create();
     world = engine.world;
 
 
-    boxA = Bodies.rectangle(400, 200, 80, 80, { label: "box" });
+    boxA = Bodies.rectangle(600, 300, 100, 100, { label: "box" });
     boxB = Bodies.rectangle(450, 50, 80, 80, { label: "box" });
 
-    ground = Bodies.rectangle(100, 700, 300, 100, {
+    ground = Bodies.rectangle(100, 670, 300, 60, {
         isStatic: true,
         label: "ground"
     })
 
-    ground1 = Bodies.rectangle(550, 700,300, 100, {
+    ground1 = Bodies.rectangle(550, 670,300, 60, {
         isStatic: true,
         label: "ground"
     })
 
-    ground2 = Bodies.rectangle(1150, 700, 500, 100, {
+    ground2 = Bodies.rectangle(1150, 670, 500, 60, {
         isStatic: true,
         label: "ground"
     })
 
-    ground3 = Bodies.rectangle(350, 350, 300, 20, {
+    ground3 = Bodies.rectangle(350, 390, 300, 60, {
         isStatic: true,
         label: "ground"
     })
 
-    ground4 = Bodies.rectangle(950, 350, 300, 20, {
+    ground4 = Bodies.rectangle(950, 400, 300, 60, {
         isStatic: true,
         label: "ground"
     })
 
-    ground5 = Bodies.rectangle(950, 350, 300, 20, {
+    ground5 = Bodies.rectangle(950, 400, 300, 60, {
         isStatic: true,
         label: "ground"
     })
 
-    ground6 = Bodies.rectangle(650, 490, 100, 20, {
+    ground6 = Bodies.rectangle(650, 520, 100, 60, {
         isStatic: true,
         label: "ground"
     })
 
-    ground7 = Bodies.rectangle(650, 150, 350, 20, {
+    ground7 = Bodies.rectangle(650, 250, 350, 60, {
         isStatic: true,
         label: "ground"
     })
-
-
-
-
-    
 
 
     Composite.add(world, [boxA, boxB, ground, ground1, ground2, ground3, ground4, ground5, ground6, ground7]);
@@ -94,8 +97,8 @@ function setup() {
 
 function draw() {
 
-
     background('#82C8E5');
+
     drawClouds();
     Engine.update(engine);
     drawPhysicsObjects();
@@ -103,6 +106,8 @@ function draw() {
 
 
 function drawClouds() {
+
+
     fill(255); 
     noStroke();
     
@@ -119,38 +124,52 @@ function drawClouds() {
             cloud.x = -100;
         }
     }
+
 }
 
+
 function drawPhysicsObjects() {
+  var bodies = Composite.allBodies(world);
 
-    var bodies = Composite.allBodies(world);
+  for (var body of bodies) {
+    var pos = body.position;
+    var angle = body.angle;
+    push();
 
-    for (var body of bodies) {
-        var pos = body.position;
-        var angle = body.angle;
-        push();
-        
+    translate(pos.x, pos.y);
+    rotate(angle);
 
-        translate(pos.x, pos.y);
-        rotate(angle);
-        
+    let w = body.bounds.max.x - body.bounds.min.x;
+    let h = body.bounds.max.y - body.bounds.min.y;
 
-        rectMode(CENTER); 
-        stroke(255);      
-        strokeWeight(2);
+    if (body.label === 'box') {
 
+      fill('#E699A8');
+      stroke(255);
+      strokeWeight(2);
+      rectMode(CENTER); 
+      rect(0, 0, w, h);
 
-        if (body.label === 'box') {
-            fill('#E699A8'); 
-        } else if (body.label === 'ground') {
-            fill('#5C4033'); 
+    } else if (body.label === 'ground') {
+
+      noStroke();
+
+      let tileW = groundImg.width;  
+      let tileH = groundImg.height; 
+
+      let yOffset = -22;
+
+      let startX = -w / 2;
+      let startY = -h / 2; 
+
+      for (let x = 0; x < w; x += tileW) {
+
+        for (let y = 0; y < h; y += tileH) { 
+
+          image(groundImg, startX + x, startY + y + yOffset, tileW, tileH);
         }
-
-
-        let w = body.bounds.max.x - body.bounds.min.x;
-        let h = body.bounds.max.y - body.bounds.min.y;
-        rect(0, 0, w, h);
-
-        pop();
+      }
     }
+    pop();
+  }
 }
