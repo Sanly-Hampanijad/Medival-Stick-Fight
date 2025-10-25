@@ -13,7 +13,7 @@ socket.on("posUpdate", data => {
 
     for(const p in data.positions) {
         var body = data.positions[p];
-        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 80, {isStatic: true})]);
+        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 99, {isStatic: true})]);
     }
 })
 
