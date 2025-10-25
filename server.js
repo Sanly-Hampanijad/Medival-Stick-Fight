@@ -65,7 +65,7 @@ io.on('connection', (socket) => {
                 console.log("Presssing D");
                 break;
             case "Space":
-                player.movePlayer(0, player.jump_force);
+                Matter.Body.applyForce(player, player.position, {x: 0, y: -0.5})
                 break;
         }
     })
