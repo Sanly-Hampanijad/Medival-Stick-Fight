@@ -32,7 +32,6 @@ const platformData = [
     { x: 100, y: 670, w: 300, h: 60, label: "ground" },
     { x: 550, y: 670, w: 300, h: 60, label: "ground" },
     { x: 1150, y: 670, w: 500, h: 60, label: "ground" },
-
 ];
 
 
@@ -41,7 +40,7 @@ const platforms = platformData.map(data => {
         isStatic: true, 
         label: data.label, 
         render: {
-            visible: false
+            visible: true
         }
     });
 });
@@ -76,34 +75,31 @@ io.on('connection', (socket) => {
     players[socket.id] = player;
     Matter.World.add(world, [player]);
     socket.on("keyDown", (KeyCode) => {
-    let moveSpeed = 5;
+        let moveSpeed = 5;
 
-    // Get the player object associated with this specific socket
-    const currentPlayer = players[socket.id]; 
-    
-    // Safety check
-    if (!currentPlayer) {
-        console.error("Player not found for socket:", socket.id);
-        return; 
+    // Get the player object associated with this specific socket 
+
+        y_velocity = Matter.Body.getVelocity(player).y;
+        switch (KeyCode){
+            case "KeyA":
+                if (player.direction == 1){
+                    player.direction *= -1;
+                }
+                Matter.Body.setVelocity(player, { x: -moveSpeed, y: y_velocity });
+                break;
+            case "KeyD":
+                if (player.direction == -1){
+                    player.direction *= -1;
+                }
+                Matter.Body.setVelocity(player, { x: moveSpeed, y: y_velocity });
+                break;
+            case "Space":
+                Matter.Body.applyForce(player, player.position, {x: 0, y: -0.5}); 
+                break;
+            }
+        });
     }
-
-    let currentYVelocity = currentPlayer.velocity ? currentPlayer.velocity.y : 0;
-
-    switch (KeyCode){
-        case "KeyA":
-            Matter.Body.setVelocity(currentPlayer, { x: -moveSpeed, y: currentYVelocity });
-            break;
-        case "KeyD":
-            Matter.Body.setVelocity(currentPlayer, { x: moveSpeed, y: currentYVelocity });
-
-            break;
-        case "Space":
-
-            Matter.Body.applyForce(currentPlayer, currentPlayer.position, {x: 0, y: -0.5}); 
-            break;
-        }
-    });
-});
+);
 
 server.listen(3000, () => {
     console.log("server is running");

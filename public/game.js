@@ -1,71 +1,23 @@
-// game.js
-
-// 1. Import the sketch from your other file
-import { sketch } from './setup_world.js';
-
-// 2. Get the HTML element where the canvas will live
-const canvasContainer = document.getElementById('canvas-container');
-
-// 3. Create the p5.js instance. This starts your game.
-new p5(sketch, canvasContainer);
+var Engine = Matter.Engine,
+    Render = Matter.Render,
+    Runner = Matter.Runner,
+    World = Matter.World,
+    Bodies = Matter.Bodies;
 
 
+var engine = Engine.create();
+var world = engine.world;
+engine.gravity.y = 0;
 
 
-// import { sketch } from './setup_world.js';
-
-// const socket = io();
-// const canvasContainer = document.getElementById('canvas-container');
-
-
-// new p5(sketch, canvasContainer);
-
-
-// socket.on("posUpdate", data => {
-//     // remove bodies
-//     const bodies = Matter.Composite.allBodies(engine.world);
-//     bodies.forEach(body => {
-//         Matter.Composite.remove(engine.world, body);
-//     });
-    
-//     for(const p of data.obstacles) {
-//         Composite.add(engine.world, [Bodies.rectangle(p.x, p.y, p.w, p.h, {isStatic: true})]);
-//     }
-
-    for(const p in data.positions) {
-        var body = data.positions[p];
-        var current_animation;
-        var current_time = Date.now();
-        var animation_to_play = current_time % 700;
-        if (body.dir == -1){
-            current_animation = "assets/tile00" + Math.floor(animation_to_play / 100) + ".png"
-        }
-        else{
-            current_animation = "assets/image(" + (Math.floor(animation_to_play / 100) + 1) + ").png" 
-        }
-        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 100, 100, {isStatic: true, render: {
-            sprite: {
-                texture: current_animation,
-                    // texture: body.dir < 0 ? "assets/Idle1_left.png" : "assets/Idle1_right",
-                    xScale: 3,
-                    yScale: 3,
-                }
-
-            }})])
-    };
+let platformImageLoaded = false;
+const platformImage = new Image();
+platformImage.src = 'assets/platform.png';
+platformImage.onload = () => {
+    platformImageLoaded = true;
+};
 
 
-// // module aliases
-// var Engine = Matter.Engine,
-//     Render = Matter.Render,
-//     Runner = Matter.Runner,
-//     Bodies = Matter.Bodies,
-//     Composite = Matter.Composite;
-
-// // create an engine
-// var engine = Engine.create();
-
-// create a renderer
 var render = Render.create({
     element: document.body,
     engine: engine,
@@ -73,19 +25,70 @@ var render = Render.create({
         width: window.innerWidth,
         height: window.innerHeight,
         wireframes: false,
+        background: 'transparent'
     }
 });
 
-// // create two boxes and a ground
-// var boxA = Bodies.rectangle(400, 200, 80, 80, {isStatic: true});
 
-// // run the renderer
-// Render.run(render);
+Render.run(render);
 
-// // add all of the bodies to the world
-// Composite.add(engine.world, [boxA]);
+const socket = io();
 
-// addEventListener("keydown", (event) => {
-//     socket.emit("keyDown", event.code)
-// });
+
+let localPlatforms = {};
+
+socket.on('posUpdate', (data) => {
+    // remove bodies
+    const bodies = Matter.Composite.allBodies(engine.world);
+    bodies.forEach(body => {
+        Matter.Composite.remove(engine.world, body);
+    });
+
+    for (const p of data.platforms) {
+        Matter.Composite.add(engine.world, [Bodies.rectangle(p.x, p.y, p.w, p.h, { 
+        isStatic: true, 
+        label: data.label, 
+        render: {
+            sprite: {
+                texture: "assets/platform.png",
+                xScale: 5,
+                yScale: 3
+            }
+        }})])
+    }
+
+
+    for(const p in data.positions) {
+        var body = data.positions[p];
+        
+        var current_animation;
+        var current_time = Date.now();
+        var animation_to_play = current_time % 700;
+        if (body.dir == 1){
+            current_animation = "assets/idle/tile00" + Math.floor(animation_to_play / 100) + ".png"
+        }
+        else{
+            current_animation = "assets/idle/image(" + (Math.floor(animation_to_play / 100) + 1) + ").png" 
+        }
+        Matter.Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 100, 100, {isStatic: true, render: {
+            sprite: {
+                texture: current_animation,
+                xScale: 3,
+                yScale: 3,
+            }
+
+            }})])
+    };
+
+
+});
+
+
+window.addEventListener('keydown', (e) => {
+    socket.emit('keyDown', e.code);
+});
+
+
+
+
 
