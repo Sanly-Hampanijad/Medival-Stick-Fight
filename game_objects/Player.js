@@ -5,10 +5,10 @@ class Player extends Matter.Bodies.rectangle {
     jump_force = 5;
 
     constructor(){
-        super(0, 0, 100, 100)
+        super(0, 0, 100, 100);
     }
-
-    move_player(xForce, yForce){
+    
+    movePlayer(xForce, yForce){
         Matter.Body.applyForce(this, this.position, {x: xForce, y: yForce});
     }
 }

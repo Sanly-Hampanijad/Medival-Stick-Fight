@@ -54,12 +54,18 @@ io.on('connection', (socket) => {
     players[socket.id] = player;
     Matter.World.add(world, [player]);
     socket.on("keyDown", (KeyCode) => {
+        console.log(KeyCode);
         switch (KeyCode){
             case "KeyA":
                 console.log("Pressing A");
+                player.position.x -= 5
                 break;
             case "KeyD":
+                player.position.x += 5
                 console.log("Presssing D");
+                break;
+            case "Space":
+                player.movePlayer(0, player.jump_force);
                 break;
         }
     })
