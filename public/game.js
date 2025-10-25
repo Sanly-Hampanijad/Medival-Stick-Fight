@@ -41,3 +41,8 @@ Render.run(render);
 
 // add all of the bodies to the world
 Composite.add(engine.world, [boxA]);
+
+addEventListener("keydown", (event) => {
+    socket.emit("keyDown", event.code)
+});
+
