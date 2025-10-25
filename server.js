@@ -61,10 +61,11 @@ setInterval(() => {
     const positions = {};
     for(const id in players) {
         const data = players[id];
-        positions[id] = {x: data.position.x, y: data.position.y, dir: data.direction};
+        positions[id] = {x: data.position.x, y: data.position.y, dir: data.direction, isAttacking: data.isAttacking};
+        
     }
     
-    io.emit("posUpdate", {positions: positions, platforms: platformData});
+    io.emit("worldUpdate", {positions: positions, platforms: platformData});
 
 }, 1000 / 60)
 
@@ -98,7 +99,13 @@ io.on('connection', (socket) => {
                 Matter.Body.applyForce(player, player.position, {x: 0, y: -0.5}); 
                 break;
             }
-        });
+    });
+    socket.on("mouseClick", (buttonCode) => {
+        if (buttonCode == 0){
+            player.isAttacking = !player.isAttacking;
+        }
+    
+    })
     }
 );
 
