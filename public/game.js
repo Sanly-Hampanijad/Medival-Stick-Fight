@@ -1,10 +1,10 @@
-import {preload, setup, draw, drawClouds, drawPhysicsObjects} from "./setup_world"
+// import {preload, setup, draw, drawClouds, drawPhysicsObjects} from "./setup_world"
 
-preload();
-setup();
-draw();
-drawClouds();
-drawPhysicsObjects();
+// preload();
+// setup();
+// draw();
+// drawClouds();
+// drawPhysicsObjects();
 
 
 
