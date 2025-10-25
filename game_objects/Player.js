@@ -1,4 +1,5 @@
-class Player extends Bodies.rectangle {
+import Matter from "matter-js";
+class Player extends Matter.Bodies.rectangle {
     health = 100;
     jump_force = 5;
 

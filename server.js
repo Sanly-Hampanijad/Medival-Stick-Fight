@@ -1,11 +1,15 @@
+const Player = require("./game_objects/Player.js");
 const express = require('express');
 const { Socket } = require('node:dgram');
 const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 const { Path } = require('path')
+
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
+
 app.use(express.static('public'));
 
 players = {}
