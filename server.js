@@ -32,17 +32,17 @@ const platformData = [
     { x: 100, y: 670, w: 300, h: 60, label: "ground" },
     { x: 550, y: 670, w: 300, h: 60, label: "ground" },
     { x: 1150, y: 670, w: 500, h: 60, label: "ground" },
-    { x: 350, y: 390, w: 300, h: 60, label: "ground" },
-    { x: 950, y: 400, w: 300, h: 60, label: "ground" },
-    { x: 650, y: 520, w: 100, h: 60, label: "ground" },
-    { x: 650, y: 250, w: 350, h: 60, label: "ground" }
+
 ];
 
 
 const platforms = platformData.map(data => {
     return Bodies.rectangle(data.x, data.y, data.w, data.h, { 
         isStatic: true, 
-        label: data.label 
+        label: data.label, 
+        render: {
+            visible: false
+        }
     });
 });
 
@@ -66,7 +66,7 @@ setInterval(() => {
     
     io.emit("posUpdate", {positions: positions, platforms: platformData});
 
-}, 1000 / 250)
+}, 1000 / 60)
 
 // socket io
 io.on('connection', (socket) => {
@@ -76,25 +76,30 @@ io.on('connection', (socket) => {
     players[socket.id] = player;
     Matter.World.add(world, [player]);
     socket.on("keyDown", (KeyCode) => {
-    // This value now represents the player's speed
-    // 5 is a good starting speed.
-    let moveSpeed = 5; 
+    let moveSpeed = 5;
+
+    // Get the player object associated with this specific socket
+    const currentPlayer = players[socket.id]; 
+    
+    // Safety check
+    if (!currentPlayer) {
+        console.error("Player not found for socket:", socket.id);
+        return; 
+    }
+
+    let currentYVelocity = currentPlayer.velocity ? currentPlayer.velocity.y : 0;
 
     switch (KeyCode){
         case "KeyA":
-            // SETS the player's horizontal speed to -5 (left)
-            // It keeps the current vertical speed (player.velocity.y)
-            Matter.Body.setVelocity(player, { x: -moveSpeed, y: player.velocity.y });
+            Matter.Body.setVelocity(currentPlayer, { x: -moveSpeed, y: currentYVelocity });
             break;
         case "KeyD":
-            // SETS the player's horizontal speed to 5 (right)
-            Matter.Body.setVelocity(player, { x: moveSpeed, y: player.velocity.y });
+            Matter.Body.setVelocity(currentPlayer, { x: moveSpeed, y: currentYVelocity });
+
             break;
         case "Space":
-            // We can still use applyForce for a jump "kick"
-            // You might need to make this jump force much larger (e.g., -5 or -10)
-            // if you are still using 'extends' in Player.js
-            Matter.Body.applyForce(player, player.position, {x: 0, y: -0.5}); 
+
+            Matter.Body.applyForce(currentPlayer, currentPlayer.position, {x: 0, y: -0.5}); 
             break;
         }
     });
