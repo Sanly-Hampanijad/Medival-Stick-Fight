@@ -8,8 +8,12 @@ const server = createServer(app);
 const io = new Server(server);
 app.use(express.static('public'));
 
+players = {}
+
 io.on('connection', (socket) => {
-    console.log('a user has connected');
+    console.log('a user has connected ', socket.id);
+    players[socket.id] = Player();
+    
 });
 
 server.listen(3000, () => {
