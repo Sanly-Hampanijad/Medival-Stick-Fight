@@ -23,18 +23,34 @@ var Engine = Matter.Engine,
 var engine = Engine.create();
 var world = engine.world;
 
+// var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+// const obstacles = [
+//     new Obstacle(400, 610, 810, 60),
+// ]
 
-const obstacles = [
-    {x: 400, y: 610, w: 810, h: 60},
-    {x: 100, y: 300, w: 100, h: 100},
-]
+const platformData = [
+    { x: 100, y: 670, w: 300, h: 60, label: "ground" },
+    { x: 550, y: 670, w: 300, h: 60, label: "ground" },
+    { x: 1150, y: 670, w: 500, h: 60, label: "ground" },
+    { x: 350, y: 390, w: 300, h: 60, label: "ground" },
+    { x: 950, y: 400, w: 300, h: 60, label: "ground" },
+    { x: 650, y: 520, w: 100, h: 60, label: "ground" },
+    { x: 650, y: 250, w: 350, h: 60, label: "ground" }
+];
 
 
-for (i in obstacles){
-    
-    rect = Bodies.rectangle(obstacles[i].x, obstacles[i].y, obstacles[i].w, obstacles[i].h, { isStatic: true, restitution: 0 });
-    Matter.World.add(world, [rect]);
-}
+const platforms = platformData.map(data => {
+    return Bodies.rectangle(data.x, data.y, data.w, data.h, { 
+        isStatic: true, 
+        label: data.label 
+    });
+});
+
+
+Composite.add(world, platforms);
+
+
+// Matter.World.add(world, [ground]);
 
 var runner = Runner.create();
 
@@ -49,7 +65,7 @@ setInterval(() => {
         positions[id] = {x: data.position.x, y: data.position.y};
     }
     
-    io.emit("posUpdate", {positions: positions, obstacles: obstacles});
+    io.emit("posUpdate", {positions: positions, platforms: platformData});
 
 }, 1000 / 250)
 
@@ -61,21 +77,28 @@ io.on('connection', (socket) => {
     players[socket.id] = player;
     Matter.World.add(world, [player]);
     socket.on("keyDown", (KeyCode) => {
-        console.log(KeyCode);
-        switch (KeyCode){
-            case "KeyA":
-                console.log("Pressing A");
-                Matter.Body.applyForce(player, player.position, {x: -0.5, y: 0})
-                break;
-            case "KeyD":
-                Matter.Body.applyForce(player, player.position, {x: 0.5, y: 0})
-                console.log("Presssing D");
-                break;
-            case "Space":
-                Matter.Body.applyForce(player, player.position, {x: 0, y: -0.5})
-                break;
+    // This value now represents the player's speed
+    // 5 is a good starting speed.
+    let moveSpeed = 5; 
+
+    switch (KeyCode){
+        case "KeyA":
+            // SETS the player's horizontal speed to -5 (left)
+            // It keeps the current vertical speed (player.velocity.y)
+            Matter.Body.setVelocity(player, { x: -moveSpeed, y: player.velocity.y });
+            break;
+        case "KeyD":
+            // SETS the player's horizontal speed to 5 (right)
+            Matter.Body.setVelocity(player, { x: moveSpeed, y: player.velocity.y });
+            break;
+        case "Space":
+            // We can still use applyForce for a jump "kick"
+            // You might need to make this jump force much larger (e.g., -5 or -10)
+            // if you are still using 'extends' in Player.js
+            Matter.Body.applyForce(player, player.position, {x: 0, y: -0.5}); 
+            break;
         }
-    })
+    });
 });
 
 server.listen(3000, () => {
