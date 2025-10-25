@@ -1,10 +1,41 @@
-// import {preload, setup, draw, drawClouds, drawPhysicsObjects} from "./setup_world"
+const socket = io();
 
-// preload();
-// setup();
-// draw();
-// drawClouds();
-// drawPhysicsObjects();
+socket.on("posUpdate", pos => {
+    // remove bodies
+    const bodies = Matter.Composite.allBodies(engine.world);
+    bodies.forEach(body => {
+        Matter.Composite.remove(engine.world, body);
+    });
 
+    for(const p in pos) {
+        var body = pos[p];
+        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 80, {isStatic: true})]);
+    }
 
+    console.log('pos update', pos);
+})
 
+// module aliases
+var Engine = Matter.Engine,
+    Render = Matter.Render,
+    Runner = Matter.Runner,
+    Bodies = Matter.Bodies,
+    Composite = Matter.Composite;
+
+// create an engine
+var engine = Engine.create();
+
+// create a renderer
+var render = Render.create({
+    element: document.body,
+    engine: engine
+});
+
+// create two boxes and a ground
+var boxA = Bodies.rectangle(400, 200, 80, 80, {isStatic: true});
+
+// run the renderer
+Render.run(render);
+
+// add all of the bodies to the world
+Composite.add(engine.world, [boxA]);

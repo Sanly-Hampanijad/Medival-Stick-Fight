@@ -1,5 +1,6 @@
 const Player = require("./game_objects/Player.js");
 const express = require('express');
+const Matter = require("matter-js");
 const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 
@@ -9,7 +10,7 @@ const io = new Server(server);
 
 app.use(express.static('public'));
 
-var players = {}
+var players = {};
 
 // game stuff
 var Engine = Matter.Engine,
@@ -19,31 +20,35 @@ var Engine = Matter.Engine,
     Composite = Matter.Composite;
 
 var engine = Engine.create();
+var world = engine.world;
 
-var render = Render.create({
-    element: document.body,
-    engine: engine
-});
-
-var boxA = Bodies.rectangle(400, 200, 80, 80);
-var boxB = Bodies.rectangle(450, 50, 80, 80);
+var boxA = Bodies.rectangle(400, 200, 80, 80, {inertia: Infinity});
 var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 
-Composite.add(engine.world, [boxA, boxB, ground]);
+Matter.World.add(world, [boxA, ground]);
 
 var runner = Runner.create();
 
 setInterval(() => {
     Matter.Engine.update(engine, 1000 / 60);
 
+    const positions = {};
+    for(const id in players) {
+        const data = players[id];
+        positions[id] = {x: data.position.x, y: data.position.y};
+    }
     
+    io.emit("posUpdate", positions);
 
 }, 1000 / 60)
 
 // socket io
 io.on('connection', (socket) => {
-    console.log('a user has connected ', socket.id);
-    players[socket.id] = new Player();
+    console.log('a user has connected', socket.id);
+    var player = new Player();
+    player.position.x = 5;
+    players[socket.id] = player;
+    Matter.World.add(world, [player]);
 });
 
 server.listen(3000, () => {
