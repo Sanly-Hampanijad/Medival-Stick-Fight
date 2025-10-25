@@ -1,4 +1,5 @@
 const Player = require("./game_objects/Player.js");
+const Obstacle = require("./game_objects/Obstacle.js");
 const express = require('express');
 const Matter = require("matter-js");
 const { createServer } = require('node:http');
@@ -22,13 +23,14 @@ var Engine = Matter.Engine,
 var engine = Engine.create();
 var world = engine.world;
 
-var boxA = Bodies.rectangle(400, 200, 80, 80, {inertia: Infinity});
-var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 
-Matter.World.add(world, [boxA, ground]);
+
+
 
 var runner = Runner.create();
 
+var obstacles = {body: Bodies.rectangle(400, 610, 810, 60, { isStatic: true })};
+Matter.World.add(world, [obstacles]);
 setInterval(() => {
     Matter.Engine.update(engine, 1000 / 60);
 
@@ -37,7 +39,8 @@ setInterval(() => {
         const data = players[id];
         positions[id] = {x: data.position.x, y: data.position.y};
     }
-    
+    io.emit("clearCanvas");
+    io.emit("renderObstables", obstacles);
     io.emit("posUpdate", positions);
 
 }, 1000 / 60)
