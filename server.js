@@ -22,10 +22,12 @@ var Engine = Matter.Engine,
 var engine = Engine.create();
 var world = engine.world;
 
-var boxA = Bodies.rectangle(400, 200, 80, 80, {inertia: Infinity});
 var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+const obstacles = [
+    {x: 400, y: 610, w: 810, h: 60}
+]
 
-Matter.World.add(world, [boxA, ground]);
+Matter.World.add(world, [ground]);
 
 var runner = Runner.create();
 
@@ -38,7 +40,7 @@ setInterval(() => {
         positions[id] = {x: data.position.x, y: data.position.y};
     }
     
-    io.emit("posUpdate", positions);
+    io.emit("posUpdate", {positions: positions, obstacles: obstacles});
 
 }, 1000 / 60)
 
