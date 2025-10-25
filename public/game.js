@@ -8,12 +8,12 @@ socket.on("posUpdate", data => {
     });
     
     for(const p of data.obstacles) {
-        Composite.add(engine.world, [Bodies.rectangle(p.x, p.y, p.w, p.h, {isStatic: true})]);
+        Composite.add(engine.world, [Bodies.rectangle(p.x, p.y, p.w, p.h, {isStatic: true, restitution: 0 })]);
     }
 
     for(const p in data.positions) {
         var body = data.positions[p];
-        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 99, {isStatic: true})]);
+        Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 80, 99, {isStatic: true, restitution: 0})]);
     }
 })
 
@@ -37,14 +37,13 @@ var render = Render.create({
     }
 });
 
-// create two boxes and a ground
-var boxA = Bodies.rectangle(400, 200, 80, 80, {isStatic: true});
+
+
 
 // run the renderer
 Render.run(render);
 
-// add all of the bodies to the world
-Composite.add(engine.world, [boxA]);
+
 
 addEventListener("keydown", (event) => {
     socket.emit("keyDown", event.code)
