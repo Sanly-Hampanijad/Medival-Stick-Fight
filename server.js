@@ -194,7 +194,7 @@ io.on('connection', (socket) => {
         }
         const player = players[socket.id];
         if (buttonCode == 0){
-            player.isAttacking = !player.isAttacking;
+            if(player !== undefined) player.isAttacking = !player.isAttacking;
         }
         if (player.character == "witch"){
             //add a bullet
