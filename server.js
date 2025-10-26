@@ -85,7 +85,7 @@ setInterval(() => {
                     console.log(target_data.lives);
                     target_data.lives -= 1;
                     if (target_data.lives <= 0){
-                        Matter.World.remove(world, target_data);
+                        io.emit("gameOver", target);
                         delete players[target];
                     }
                 }
@@ -145,7 +145,7 @@ setInterval(() => {
         bullets: bullet_info
     });
 
-}, 1000 / 60)
+}, 1000 / 120)
 
 
 io.on('connection', (socket) => {
@@ -195,78 +195,16 @@ io.on('connection', (socket) => {
     });
 
     socket.on("mouseClick", (buttonCode) => {
-        const player = players[socket.id];
-        if (!player) return;
-
-        if (buttonCode == 0){ 
-            if (player.character === 'knight') {
-        
-                player.isAttacking = !player.isAttacking;
-                
+        if (buttonCode == 0){
+            player.isAttacking = !player.isAttacking;
+        }
     
-                setTimeout(() => {
-                    if (player) player.isAttacking = false;
-                }, 600); 
-
-            } 
-            else if (player.character === 'witch') {
-
-                const now = Date.now();
-                const cooldown = 500;
-
-                if (now - player.lastAttackTime > cooldown) {
-                    player.lastAttackTime = now;
-                    console.log('Witch is firing a bullet');
-
-
-                    player.isAttacking = true;
-                    setTimeout(() => {
-                        if (player) { 
-                            player.isAttacking = false;
-                        }
-                    }, 500); 
-
-
-                    let bulletId = socket.id + now;
-                    let bulletX = player.position.x + (50 * player.direction); 
-                    let bulletY = player.position.y - 20; 
-                    let bulletSize = 20; 
-
-                    let bullet = Bodies.rectangle(bulletX, bulletY, bulletSize, bulletSize, { 
-                        label: 'bullet',
-
-                        collisionFilter: {
-                            group: -1 
-                        }
-                        
-                    });
-
-                    bullet.ownerId = socket.id;
-                    bullet.direction = player.direction;
-
-                    bullets[bulletId] = bullet;
-                    Matter.World.add(world, [bullet]);
-
-                    let bulletSpeed = 10;
-                    Matter.Body.setVelocity(bullet, { 
-                        x: bulletSpeed * player.direction, 
-                        y: 0 
-                    });
-                }
-            }
-        }
-    });
-
+    })
     socket.on('disconnect', () => {
-        console.log('user disconnected', socket.id);
-        const player = players[socket.id];
-        
-        if (player) {
-            Matter.World.remove(world, player);
-            delete players[socket.id];
-        }
-    });
-});
+        delete players[socket.id];
+    })
+    }
+);
 
 server.listen(3000, () => {
     console.log("server is running on port 3000");
