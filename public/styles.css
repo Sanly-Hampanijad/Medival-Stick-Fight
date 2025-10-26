@@ -5,3 +5,33 @@ body {
     background-image: url('assets/PixelGameBackground.jpg');
     background-size: cover;
 }
+
+
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #222;
+    color: white;
+}
+
+#menu header {
+    font-size: 5rem;
+    font-family: sans-serif;
+}
+
+#menu button {
+    font-size: 2rem;
+    padding: 1rem 3rem;
+    margin: 1rem;
+    cursor: pointer;
+}
+
+
+canvas {
+    display: none;
+}
