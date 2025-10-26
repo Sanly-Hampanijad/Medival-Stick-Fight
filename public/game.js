@@ -79,15 +79,15 @@ socket.on('worldUpdate', (data) => {
                 if(characterType == "knight") {
                     current_animation = "assets/attack/tile00" + (Math.floor(animation_to_play / 100) + 1) + ".png";
                 } else {
-                    // *** FIXED PATH (uppercase 'Idle') ***
+                   
                     current_animation = "assets/idle/witchAnimations/idle/witchAttack/Attackanimation" + (Math.floor(animation_to_play / 100) + 1) + ".png";
                 }
             } else { // Facing LEFT
                 if(characterType == "knight") {
                     current_animation = "assets/attack/image(" +  (Math.floor(animation_to_play / 100) + 1) + ").png";
                 } else {
-                    // *** FIXED PATH (uppercase 'Idle') ***
-                    current_animation = "assets/idle/witchAnimations/idle/witchAttack/Attackanimation" + (Math.floor(animation_to_play / 100) + 1) + ".png";
+             
+                    current_animation = "assets/idle/witchAnimations/idle/witchAttack/reverseWitchAttack/image(" + (Math.floor(animation_to_play / 100) + 1) + ").png";
                 }
             }
             Matter.Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 100, 100, {isStatic: true, render: {
@@ -109,7 +109,7 @@ socket.on('worldUpdate', (data) => {
                 if(characterType == "knight") {
                     current_animation = "assets/idle/tile00" + Math.floor(animation_to_play / 100) + ".png";
                 } else {
-                    // *** FIXED PATH (uppercase 'Idle') ***
+           
                     current_animation = "assets/idle/witchAnimations/idle/Idleanimation" + (Math.floor(animation_to_play / 100) + 1) + ".png";
                 }
             } else{ // Facing LEFT
@@ -117,8 +117,8 @@ socket.on('worldUpdate', (data) => {
                     current_animation = "assets/idle/image(" + (Math.floor(animation_to_play / 100) + 1) + ").png"
                     console.log(current_animation);
                 } else {
-                    // *** FIXED PATH (uppercase 'Idle') ***
-                    current_animation = "assets/idle/witchAnimations/idle/Idleanimation" + (Math.floor(animation_to_play / 100) + 1) + ".png";
+                   
+                    current_animation = "assets/idle/witchAnimations/idle/reverseIdleAnimation/image(" + (Math.floor(animation_to_play / 100) + 1) + ").png";
                 }
             }
             Matter.Composite.add(engine.world, [Bodies.rectangle(body.x, body.y, 100, 100, {isStatic: true, render: {
