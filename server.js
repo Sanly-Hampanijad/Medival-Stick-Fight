@@ -120,10 +120,11 @@ setInterval(() => {
 
         if (hit) continue;
 
-        bullets[i].x += 0.00001 * bullets[i].direction;
+        bullets[i].position.x += 1 * bullets[i].direction;
+
         bullet_info[i] = {
-            x: bullets[i].x,
-            y: bullets[i].y,
+            x: bullets[i].position.x,
+            y: bullets[i].position.y,
             dir: bullets[i].direction
         };
     }
