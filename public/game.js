@@ -29,6 +29,7 @@ const socket = io();
 const menu = document.getElementById('menu');
 const knightButton = document.getElementById('knight-btn');
 const witchButton = document.getElementById('witch-btn');
+const respawnButton = document.getElementById('respawnButton');
 
 
 function joinGame(characterType) {

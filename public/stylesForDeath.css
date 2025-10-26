@@ -1,0 +1,27 @@
+body{
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-image: url('assets/deathScreenBackground.jpg');
+    background-size: cover;
+}
+
+
+h1{
+    color: white;
+}
+
+
+button {
+    font-size: 20px;
+    color: white;
+    padding: 1rem 3rem;
+    margin: 1rem;
+    cursor: pointer;
+    background-image: url('assets/20250420manaSoulHeaderB-Sheet-removebg-preview.png');
+    background-size: cover;
+    background-position: center;
+    border: none;
+    display: block;
+    margin: 0 auto;
+}

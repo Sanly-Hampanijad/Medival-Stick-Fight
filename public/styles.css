@@ -15,13 +15,14 @@ body {
     justify-content: center;
     width: 100vw;
     height: 100vh;
-    background-color: #222;
+    background-image: url('assets/20250420manaSoul9SlicesB-Sheet.png');
     color: white;
 }
 
+
 #menu header {
-    font-size: 5rem;
-    font-family: sans-serif;
+  font-family: 'MedievalSharp', cursive; 
+  font-size: 100px;
 }
 
 #menu button {
@@ -29,9 +30,23 @@ body {
     padding: 1rem 3rem;
     margin: 1rem;
     cursor: pointer;
+    background-image: url('assets/20250420manaSoulHeaderA-Sheet.png');
+    background-size: cover;
+    background-position: center;
+    border: none;
 }
 
 
 canvas {
     display: none;
 }
+
+
+.DeathScreenBackground{
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-image: url('assets/deathScreenBackground.jpg');
+    background-size: cover;
+}
+
