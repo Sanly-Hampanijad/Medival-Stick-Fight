@@ -79,7 +79,7 @@ setInterval(() => {
                     console.log(target_data.lives);
                     target_data.lives -= 1;
                     if (target_data.lives <= 0){
-                        
+                        io.emit("gameOver", target);
                         delete players[target];
                     }
                 }
@@ -127,6 +127,9 @@ io.on('connection', (socket) => {
             player.isAttacking = !player.isAttacking;
         }
     
+    })
+    socket.on('disconnect', () => {
+        delete players[socket.id];
     })
     }
 );

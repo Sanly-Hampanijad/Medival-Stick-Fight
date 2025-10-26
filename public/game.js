@@ -95,6 +95,11 @@ socket.on('worldUpdate', (data) => {
 
 });
 
+socket.on("gameOver", (id) => {
+    if (id == socket.id){
+        window.location.href = "gameOver.html"
+    }
+})
 
 window.addEventListener('keydown', (e) => {
     socket.emit('keyDown', e.code);
