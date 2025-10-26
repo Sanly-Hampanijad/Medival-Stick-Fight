@@ -139,10 +139,21 @@ socket.on('worldUpdate', (data) => {
         const current_time = Date.now();
         const animation_to_play = current_time % 600; // 6 frames * 100ms = 600ms
         const frame_index = Math.floor(animation_to_play / 100); // Gives 0, 1, 2, 3, 4, 5
+        let bullet_sprite;
         
         // Correct path from your screenshot (tile000.png to tile005.png)
-        let bullet_sprite = `assets/idle/witchAnimations/idle/witchAttack/tile00${frame_index}.png`;
+        if(bullet.dir == 1)
+        {
+            bullet_sprite = `assets/idle/witchAnimations/idle/witchAttack/tile00${frame_index}.png`;
+        }
+        else
+        {
+            bullet_sprite = `assets/idle/witchAnimations/idle/witchAttack/reverseMagicSpell/image(${frame_index}).png`;
+        }
 
+
+
+        
         // Draw the bullet
         Matter.Composite.add(engine.world, [Bodies.rectangle(bullet.x, bullet.y, 20, 20, { // Must match server's bulletSize
             isStatic: true, 
