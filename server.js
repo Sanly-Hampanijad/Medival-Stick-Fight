@@ -108,6 +108,7 @@ setInterval(() => {
                 console.log('Bullet hit player ' + playerId);
                 target.lives -= 1; 
                 if (target.lives <= 0) {
+                    io.emit("gameOver", playerId);
                     delete players[playerId];
                 }
                 
