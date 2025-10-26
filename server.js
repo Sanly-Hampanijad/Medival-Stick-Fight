@@ -89,7 +89,7 @@ setInterval(() => {
     
     io.emit("worldUpdate", {positions: player_info, platforms: platformData});
 
-}, 1000 / 60)
+}, 1000 / 120)
 
 // socket io
 io.on('connection', (socket) => {
