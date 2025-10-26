@@ -1,5 +1,6 @@
 const Player = require("./game_objects/Player.js");
 const Obstacle = require("./game_objects/Obstacle.js");
+const Bullet = require("./game_objects/Bullet.js");
 const express = require('express');
 const Matter = require("matter-js");
 const { createServer } = require('node:http');
@@ -12,7 +13,7 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 var players = {};
-var bullets = {}; 
+var bullets = []; 
 
 
 var Engine = Matter.Engine,
@@ -61,7 +62,7 @@ function in_range(pos1, pos2, distance){
 setInterval(() => {
 
     Matter.Engine.update(engine, 1000 / 60);
-
+    bullet_info = {}
     const player_info = {};
     for(const id in players) {
         const data = players[id];
@@ -84,7 +85,6 @@ setInterval(() => {
                 const target_data = players[target];
     
                 if (in_range(data.position, target_data.position)){ 
-                    console.log(target_data.lives);
                     target_data.lives -= 1;
                     if (target_data.lives <= 0){
                         io.emit("gameOver", target);
@@ -94,31 +94,25 @@ setInterval(() => {
             }
         }
     }
-
-    const bullet_info = {};
-    for (const id in bullets) {
-        const bullet = bullets[id];
-
-    
+    for (i = 0; i < bullets.length; i++) {
         let hit = false;
         for (const playerId in players) {
 
-            if (playerId === bullet.ownerId) {
+            if (playerId === bullets[i].ownerId) {
                 continue;
             }
 
             const target = players[playerId];
-
-            if (in_range(bullet.position, target.position, 50)) { 
+            
+            if (in_range(bullets[i].position, target.position, 50)) { 
                 console.log('Bullet hit player ' + playerId);
                 target.lives -= 1; 
                 if (target.lives <= 0) {
-                    Matter.World.remove(world, target);
                     delete players[playerId];
                 }
                 
-                Matter.World.remove(world, bullet);
-                delete bullets[id];
+                //remove the bullet
+                bullets.splice(i, 1);
                 hit = true;
                 break;
             }
@@ -126,20 +120,15 @@ setInterval(() => {
 
         if (hit) continue;
 
-
-        if (bullet.position.x > 2000 || bullet.position.x < -200) {
-            Matter.World.remove(world, bullet);
-            delete bullets[id];
-            continue;
-        }
-
-        bullet_info[id] = {
-            x: bullet.position.x,
-            y: bullet.position.y,
-            dir: bullet.direction
+        bullets[i].x += 0.00001 * bullets[i].direction;
+        bullet_info[i] = {
+            x: bullets[i].x,
+            y: bullets[i].y,
+            dir: bullets[i].direction
         };
     }
     
+
 
     io.emit("worldUpdate", {
         positions: player_info, 
@@ -157,7 +146,7 @@ io.on('connection', (socket) => {
     socket.on('playerJoin', (data) => {
         console.log(socket.id, 'chose', data.character);
         
-        var player = new Player();
+        var player = new Player(data.character);
         player.position.x = 5;
         player.character = data.character;
         player.lastAttackTime = 0; 
@@ -197,9 +186,17 @@ io.on('connection', (socket) => {
     });
 
     socket.on("mouseClick", (buttonCode) => {
+        
+        if (Object.keys(players).length <= 0){
+            return;
+        }
         const player = players[socket.id];
         if (buttonCode == 0){
             player.isAttacking = !player.isAttacking;
+        }
+        if (player.character == "witch"){
+            //add a bullet
+            bullets.push(new Bullet(player.position.x, player.position.y, player.direction, socket.id));
         }
     
     })

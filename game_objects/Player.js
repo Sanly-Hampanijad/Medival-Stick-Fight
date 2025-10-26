@@ -6,8 +6,10 @@ class Player extends Matter.Bodies.rectangle {
     direction = 1;
     isAttacking = true;
     lives = 3;
-    constructor() {
+    
+    constructor(character) {
         super(0, 0, 100, 100);
+        this.character = character;
     }
 
 }
