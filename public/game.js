@@ -114,7 +114,8 @@ socket.on('worldUpdate', (data) => {
                 }
             } else{ // Facing LEFT
                 if(characterType == "knight") {
-                    current_animation = "assets/idle/image(" + (Math.floor(animation_to_play / 100) + 1) + ".png"
+                    current_animation = "assets/idle/image(" + (Math.floor(animation_to_play / 100) + 1) + ").png"
+                    console.log(current_animation);
                 } else {
                     // *** FIXED PATH (uppercase 'Idle') ***
                     current_animation = "assets/idle/witchAnimations/idle/Idleanimation" + (Math.floor(animation_to_play / 100) + 1) + ".png";

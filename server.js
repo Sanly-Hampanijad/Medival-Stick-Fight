@@ -56,6 +56,8 @@ function in_range(pos1, pos2, distance){
     return false;
 }
 
+
+//main game logic loop, similar to update in unity
 setInterval(() => {
 
     Matter.Engine.update(engine, 1000 / 60);
@@ -195,6 +197,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on("mouseClick", (buttonCode) => {
+        const player = players[socket.id];
         if (buttonCode == 0){
             player.isAttacking = !player.isAttacking;
         }
