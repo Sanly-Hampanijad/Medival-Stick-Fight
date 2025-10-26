@@ -5,6 +5,7 @@ class Player extends Matter.Bodies.rectangle {
     jump_force = 10;
     direction = 1;
     isAttacking = true;
+    lives = 3;
     constructor() {
         super(0, 0, 100, 100);
     }

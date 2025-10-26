@@ -51,19 +51,43 @@ Composite.add(world, platforms);
 
 var runner = Runner.create();
 
+function in_range(pos1, pos2){
+    touching_distance = 125;
+    if (Math.sqrt((pos2.x - pos1.x)**2 + (pos2.y - pos1.y)**2) <= touching_distance) {
+        return true;
+    }
+    return false;
+}
+
 // Matter.World.add(world, [obstacles]);
 setInterval(() => {
 
     Matter.Engine.update(engine, 1000 / 60);
 
-    const positions = {};
+    const player_info = {};
     for(const id in players) {
         const data = players[id];
-        positions[id] = {x: data.position.x, y: data.position.y, dir: data.direction, isAttacking: data.isAttacking};
-        
+        player_info[id] = {x: data.position.x, y: data.position.y, dir: data.direction, isAttacking: data.isAttacking};
+        if (data.isAttacking){
+            for (const target in players){
+                if (target == id){
+                    continue;
+                } 
+                const target_data = players[target];
+                if (in_range(data.position, target_data.position)){
+                
+                    console.log(target_data.lives);
+                    target_data.lives -= 1;
+                    if (target_data.lives <= 0){
+                        
+                        delete players[target];
+                    }
+                }
+            }
+        }
     }
     
-    io.emit("worldUpdate", {positions: positions, platforms: platformData});
+    io.emit("worldUpdate", {positions: player_info, platforms: platformData});
 
 }, 1000 / 60)
 
@@ -96,7 +120,7 @@ io.on('connection', (socket) => {
             case "Space":
                 Matter.Body.applyForce(player, player.position, {x: 0, y: -0.5}); 
                 break;
-            }
+        }
     });
     socket.on("mouseClick", (buttonCode) => {
         if (buttonCode == 0){
